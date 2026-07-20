@@ -180,6 +180,60 @@ jobs:
           echo "down_list=${DOWN_LIST%, }" >> $GITHUB_OUTPUT
           echo "ssl_warn_list=${SSL_WARN_LIST%, }" >> $GITHUB_OUTPUT
 
+      # Additive dual-write: mirror each service check into Supabase so the
+      # dashboard can later read long-term history from the DB instead of CSV.
+      # The page still reads the committed CSV today, so a failure here changes
+      # nothing user-visible — the step is best-effort (never fails the run) and
+      # is skipped entirely when the secret is absent (e.g. on forks / PRs).
+      - name: Record checks in Supabase
+        if: always()
+        continue-on-error: true
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          if [ -z "$SUPABASE_SERVICE_ROLE_KEY" ] || [ -z "$SUPABASE_URL" ]; then
+            echo "Supabase secrets not set — skipping DB write (CSV history unaffected)."
+            exit 0
+          fi
+          if [ ! -f data/status.json ]; then
+            echo "No data/status.json — nothing to record."
+            exit 0
+          fi
+
+          # Build a JSON array of rows from status.json: one row per service.
+          # response_ms = response_time_s * 1000 (rounded). service = the id key.
+          PAYLOAD=$(python3 - <<'PY'
+          import json
+          with open('data/status.json') as f:
+              doc = json.load(f)
+          rows = []
+          for sid, s in (doc.get('services') or {}).items():
+              try:
+                  ms = int(round(float(s.get('response_time_s') or 0) * 1000))
+              except (TypeError, ValueError):
+                  ms = 0
+              rows.append({
+                  'service': sid,
+                  'status': s.get('status') or 'unknown',
+                  'http_code': s.get('http_status') or 0,
+                  'response_ms': ms,
+              })
+          print(json.dumps(rows))
+          PY
+          )
+
+          echo "Posting $(echo "$PAYLOAD" | jq 'length') check rows to Supabase..."
+          curl --silent --show-error --fail \
+            -X POST "$SUPABASE_URL/rest/v1/status_checks_portfolio" \
+            -H "apikey: $SUPABASE_SERVICE_ROLE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
+            -H "Content-Type: application/json" \
+            -H "Prefer: return=minimal" \
+            -d "$PAYLOAD" \
+            && echo "Supabase write OK" \
+            || echo "Supabase write failed (CSV history is unaffected)."
+
       - name: Open incident if down
         id: incident
         if: steps.checks.outputs.all_up == 'false'
