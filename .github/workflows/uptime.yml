@@ -24,7 +24,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
         with:
           ref: main
           fetch-depth: 0
@@ -183,7 +183,7 @@ jobs:
       - name: Open incident if down
         id: incident
         if: steps.checks.outputs.all_up == 'false'
-        uses: actions/github-script@v8
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         env:
           DOWN_LIST: ${{ steps.checks.outputs.down_list }}
         with:
@@ -215,7 +215,7 @@ jobs:
       - name: Auto-close incident if all services recovered
         id: recover
         if: steps.checks.outputs.all_up == 'true'
-        uses: actions/github-script@v8
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -248,7 +248,7 @@ jobs:
       - name: Manage SSL expiry warnings
         id: ssl
         continue-on-error: true
-        uses: actions/github-script@v8
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         env:
           SSL_WARN_LIST: ${{ steps.checks.outputs.ssl_warn_list }}
         with:
@@ -378,7 +378,7 @@ jobs:
 
       - name: Build incidents JSON
         continue-on-error: true
-        uses: actions/github-script@v8
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -450,7 +450,7 @@ jobs:
 
       - name: Build maintenance JSON
         continue-on-error: true
-        uses: actions/github-script@v8
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
