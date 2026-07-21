@@ -748,7 +748,7 @@ function renderGrid(){
     const firstReal = hist.find(b => b.winStart && b.state !== 'nodata');
     const rangeLabel = firstReal ? new Date(firstReal.winStart).toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) : '';
 
-    const displayHost = svc.url.replace('https://','');
+    const displayHost = svc.url ? svc.url.replace(/^https?:\/\//,'') : '';
 
     return `<div class="service-card ${cardClass}">
       <div class="sc-header">
@@ -756,7 +756,7 @@ function renderGrid(){
           <div class="service-icon" aria-hidden="true">${svc.icon || '🌐'}</div>
           <div>
             <div class="service-name">${escapeHtml(svc.name)}${svc.group ? `<span class="service-group">${escapeHtml(svc.group)}</span>` : ''}</div>
-            <div class="service-url"><a href="${escapeHtml(svc.url)}" target="_blank" rel="noopener">${escapeHtml(displayHost)}</a></div>
+            <div class="service-url">${svc.url ? `<a href="${escapeHtml(svc.url)}" target="_blank" rel="noopener">${escapeHtml(displayHost)}</a>` : `<span style="opacity:.55">private</span>`}</div>
           </div>
         </div>
         <div class="status-chip ${chipClass}"><span class="dot-sm"></span>${chipText}</div>

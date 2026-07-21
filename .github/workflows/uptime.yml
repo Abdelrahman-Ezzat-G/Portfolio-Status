@@ -31,6 +31,13 @@ jobs:
 
       - name: Run service checks
         id: checks
+        env:
+          # Real URLs of private services (audit PS-2) are kept in secrets so the
+          # public repo/page never exposes the internal name or address. A service
+          # in services.json with "url_secret":"SVC_A_URL" is probed against the
+          # value of that secret; the published data shows only its alias.
+          SVC_A_URL: ${{ secrets.SVC_A_URL }}
+          SVC_B_URL: ${{ secrets.SVC_B_URL }}
         run: |
           mkdir -p data
           TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
@@ -66,46 +73,71 @@ jobs:
           for i in $(seq 0 $((COUNT - 1))); do
             ID=$(jq -r ".services[$i].id" services.json)
             NAME=$(jq -r ".services[$i].name" services.json)
-            URL=$(jq -r ".services[$i].url" services.json)
-            CHECK_URL=$(jq -r ".services[$i].check_url // .services[$i].url" services.json)
             EXTRA_OK=$(jq -r "(.services[$i].extra_ok // []) | map(tostring) | join(\" \")" services.json)
+            URL_SECRET=$(jq -r ".services[$i].url_secret // empty" services.json)
 
-            OUT=$(probe "$CHECK_URL")
-            STATUS="${OUT%% *}"; TIME="${OUT##* }"
-            STATUS=$((10#${STATUS:-0}))
-            case "$TIME" in ''|*[!0-9.]*) TIME=0;; esac
-            RESULT=$(eval_result)
+            # audit PS-2: a private service carries its real URL only in a secret.
+            # Probe against the secret value; publish an EMPTY url so the internal
+            # address is never written to the public status.json / page.
+            NODATA=0
+            if [ -n "$URL_SECRET" ]; then
+              REAL_URL="${!URL_SECRET}"
+              URL="$REAL_URL"
+              CHECK_URL="$REAL_URL"
+              PUBLIC_URL=""
+              if [ -z "$REAL_URL" ]; then
+                # Secret not set yet — record no-data (never a false "down"/incident).
+                echo "$NAME: secret $URL_SECRET is not set — recording no-data (no probe)"
+                NODATA=1
+              fi
+            else
+              URL=$(jq -r ".services[$i].url" services.json)
+              CHECK_URL=$(jq -r ".services[$i].check_url // .services[$i].url" services.json)
+              PUBLIC_URL="$URL"
+            fi
 
-            # A single failed probe can be a transient network blip; confirm
-            # before declaring an outage (which opens an incident + emails).
-            if [ "$RESULT" = "down" ]; then
-              echo "$NAME appears down (HTTP $STATUS) — re-checking in 20s to confirm"
-              sleep 20
+            SSL_DAYS="null"
+            SSL_EXPIRES=""
+
+            if [ "$NODATA" = "1" ]; then
+              RESULT=""; STATUS=0; TIME=0
+              echo "$NAME: no-data (private service, secret unset)"
+            else
               OUT=$(probe "$CHECK_URL")
               STATUS="${OUT%% *}"; TIME="${OUT##* }"
               STATUS=$((10#${STATUS:-0}))
               case "$TIME" in ''|*[!0-9.]*) TIME=0;; esac
               RESULT=$(eval_result)
-            fi
 
-            # TLS certificate expiry (days remaining) — early warning for expiring
-            # or replaced certificates.
-            HOST=$(printf '%s' "$CHECK_URL" | sed -E 's|https?://([^/:]+).*|\1|')
-            SSL_DAYS="null"
-            SSL_EXPIRES=""
-            END=$(echo | timeout 20 openssl s_client -servername "$HOST" -connect "$HOST:443" 2>/dev/null | openssl x509 -noout -enddate 2>/dev/null | cut -d= -f2) || END=""
-            if [ -n "$END" ]; then
-              END_TS=$(date -u -d "$END" +%s 2>/dev/null) || END_TS=""
-              if [ -n "$END_TS" ]; then
-                SSL_DAYS=$(( (END_TS - NOW_TS) / 86400 ))
-                SSL_EXPIRES=$(date -u -d "$END" +"%Y-%m-%d" 2>/dev/null) || SSL_EXPIRES=""
-                if [ "$SSL_DAYS" -le 10 ]; then
-                  SSL_WARN_LIST="$SSL_WARN_LIST$NAME (${SSL_DAYS}d left), "
+              # A single failed probe can be a transient network blip; confirm
+              # before declaring an outage (which opens an incident + emails).
+              if [ "$RESULT" = "down" ]; then
+                echo "$NAME appears down (HTTP $STATUS) — re-checking in 20s to confirm"
+                sleep 20
+                OUT=$(probe "$CHECK_URL")
+                STATUS="${OUT%% *}"; TIME="${OUT##* }"
+                STATUS=$((10#${STATUS:-0}))
+                case "$TIME" in ''|*[!0-9.]*) TIME=0;; esac
+                RESULT=$(eval_result)
+              fi
+
+              # TLS certificate expiry (days remaining) — early warning for expiring
+              # or replaced certificates.
+              HOST=$(printf '%s' "$CHECK_URL" | sed -E 's|https?://([^/:]+).*|\1|')
+              END=$(echo | timeout 20 openssl s_client -servername "$HOST" -connect "$HOST:443" 2>/dev/null | openssl x509 -noout -enddate 2>/dev/null | cut -d= -f2) || END=""
+              if [ -n "$END" ]; then
+                END_TS=$(date -u -d "$END" +%s 2>/dev/null) || END_TS=""
+                if [ -n "$END_TS" ]; then
+                  SSL_DAYS=$(( (END_TS - NOW_TS) / 86400 ))
+                  SSL_EXPIRES=$(date -u -d "$END" +"%Y-%m-%d" 2>/dev/null) || SSL_EXPIRES=""
+                  if [ "$SSL_DAYS" -le 10 ]; then
+                    SSL_WARN_LIST="$SSL_WARN_LIST$NAME (${SSL_DAYS}d left), "
+                  fi
                 fi
               fi
             fi
 
-            echo "$NAME: HTTP $STATUS in ${TIME}s (result=$RESULT, ssl=${SSL_DAYS}d)"
+            echo "$NAME: HTTP $STATUS in ${TIME}s (result=${RESULT:-nodata}, ssl=${SSL_DAYS}d)"
 
             if [ "$RESULT" = "down" ]; then
               ALL_UP=false
@@ -113,7 +145,7 @@ jobs:
             fi
 
             SERVICES_JSON=$(printf '%s' "$SERVICES_JSON" | jq \
-              --arg id "$ID" --arg name "$NAME" --arg url "$URL" \
+              --arg id "$ID" --arg name "$NAME" --arg url "$PUBLIC_URL" \
               --arg result "$RESULT" --arg ssl_expires "$SSL_EXPIRES" \
               --argjson http "$STATUS" --argjson time "$TIME" --argjson ssl "$SSL_DAYS" \
               '.[$id] = {name:$name, url:$url, status:$result, http_status:$http, response_time_s:$time, ssl_days_left:$ssl, ssl_expires:(if $ssl_expires == "" then null else $ssl_expires end)}')

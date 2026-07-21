@@ -12,9 +12,10 @@
     },
     {
       "id": "ha",
-      "name": "Home Assistant",
-      "url": "https://ha.abdelrahman-ezzat.com",
-      "icon": "🏠",
+      "name": "Service A",
+      "url_secret": "SVC_A_URL",
+      "private": true,
+      "icon": "🔒",
       "extra_ok": [401, 403],
       "slow_ms": 2000,
       "group": "Personal"
@@ -43,9 +44,10 @@
     },
     {
       "id": "finance",
-      "name": "Finance",
-      "url": "https://fa.abdelrahman-ezzat.com",
-      "icon": "💰",
+      "name": "Service B",
+      "url_secret": "SVC_B_URL",
+      "private": true,
+      "icon": "🔒",
       "extra_ok": [401, 403],
       "slow_ms": 2000,
       "group": "Personal"
