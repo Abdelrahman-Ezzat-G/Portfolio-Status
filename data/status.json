@@ -12,8 +12,8 @@
       "ssl_expires": "2026-08-29"
     },
     "ha": {
-      "name": "Home Assistant",
-      "url": "https://ha.abdelrahman-ezzat.com",
+      "name": "Service A",
+      "url": "",
       "status": "up",
       "http_status": 200,
       "response_time_s": 0.603300,
@@ -48,8 +48,8 @@
       "ssl_expires": "2026-09-15"
     },
     "finance": {
-      "name": "Finance",
-      "url": "https://fa.abdelrahman-ezzat.com",
+      "name": "Service B",
+      "url": "",
       "status": "up",
       "http_status": 200,
       "response_time_s": 0.150595,
