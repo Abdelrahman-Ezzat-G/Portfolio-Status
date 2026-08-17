@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-17T11:11:05Z",
+  "timestamp": "2026-08-17T11:44:33Z",
   "date": "2026-08-17",
   "services": {
     "portfolio": {
@@ -7,7 +7,7 @@
       "url": "https://abdelrahman-ezzat.com",
       "status": "up",
       "http_status": 200,
-      "response_time_s": 0.147501,
+      "response_time_s": 0.083091,
       "ssl_days_left": 77,
       "ssl_expires": "2026-11-02"
     },
@@ -16,7 +16,7 @@
       "url": "",
       "status": "down",
       "http_status": 530,
-      "response_time_s": 0.054981,
+      "response_time_s": 0.038026,
       "ssl_days_left": 70,
       "ssl_expires": "2026-10-26"
     },
@@ -25,7 +25,7 @@
       "url": "https://quneva.com",
       "status": "up",
       "http_status": 200,
-      "response_time_s": 0.144465,
+      "response_time_s": 0.092390,
       "ssl_days_left": 84,
       "ssl_expires": "2026-11-10"
     },
@@ -52,7 +52,7 @@
       "url": "",
       "status": "up",
       "http_status": 200,
-      "response_time_s": 0.109927,
+      "response_time_s": 0.170751,
       "ssl_days_left": 59,
       "ssl_expires": "2026-10-15"
     }
