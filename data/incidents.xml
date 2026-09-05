@@ -13,12 +13,4 @@
     <published>2026-08-12T17:46:00.000Z</published>
     <summary>Ongoing incident</summary>
   </entry>
-  <entry>
-    <title>[Incident] Service disruption: Service A (HTTP 0)</title>
-    <link href="https://github.com/Abdelrahman-Ezzat-G/Portfolio-Status/issues/11"/>
-    <id>https://github.com/Abdelrahman-Ezzat-G/Portfolio-Status/issues/11</id>
-    <updated>2026-08-06T12:15:18.000Z</updated>
-    <published>2026-08-06T10:05:27.000Z</published>
-    <summary>Resolved incident</summary>
-  </entry>
 </feed>

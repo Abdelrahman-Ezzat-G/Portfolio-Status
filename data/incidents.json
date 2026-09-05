@@ -5,12 +5,5 @@
     "state": "open",
     "created_at": "2026-08-12T17:46:00Z",
     "closed_at": null
-  },
-  {
-    "title": "[Incident] Service disruption: Service A (HTTP 0)",
-    "html_url": "https://github.com/Abdelrahman-Ezzat-G/Portfolio-Status/issues/11",
-    "state": "closed",
-    "created_at": "2026-08-06T10:05:27Z",
-    "closed_at": "2026-08-06T12:15:18Z"
   }
 ]
