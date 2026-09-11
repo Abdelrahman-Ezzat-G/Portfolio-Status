@@ -4,13 +4,5 @@
   <link href="https://status.abdelrahman-ezzat.com/data/incidents.xml" rel="self"/>
   <link href="https://status.abdelrahman-ezzat.com"/>
   <id>https://status.abdelrahman-ezzat.com/</id>
-  <updated>2026-08-12T17:46:00.000Z</updated>
-  <entry>
-    <title>[Incident] Service disruption: QuNeva AI (HTTP 0), QuNeva Status Page (HTTP 0)</title>
-    <link href="https://github.com/Abdelrahman-Ezzat-G/Portfolio-Status/issues/14"/>
-    <id>https://github.com/Abdelrahman-Ezzat-G/Portfolio-Status/issues/14</id>
-    <updated>2026-08-12T17:46:00.000Z</updated>
-    <published>2026-08-12T17:46:00.000Z</published>
-    <summary>Ongoing incident</summary>
-  </entry>
+  <updated>2026-09-11T17:53:08.106Z</updated>
 </feed>
