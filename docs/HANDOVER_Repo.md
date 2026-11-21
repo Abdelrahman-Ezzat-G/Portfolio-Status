@@ -26,12 +26,12 @@
 
 ## 3. Architecture, build, deploy
 
-- A static site on **GitHub Pages** (`CNAME` = `status.abdelrahman-ezzat.com`; `index.html`, `404.html`, `manifest.webmanifest`, `services.json`, `data/`). No build step. The single source of services is **`services.json`** (append new services at the END so history keeps its indexes).
+- A static site. **Two hosts are connected to this repo: GitHub Pages (`CNAME` = `status.abdelrahman-ezzat.com`) and a Cloudflare Pages project named `status-public`** (seen on 2026-11-21 from Cloudflare's Pages comment on PR #15; its preview URLs look like `<id>.status-public.pages.dev`). **Which one actually serves the custom domain is غير مؤكد**: check the DNS record of `status.abdelrahman-ezzat.com` and the Pages project's custom domains before editing either ( `index.html`, `404.html`, `manifest.webmanifest`, `services.json`, `data/`; no build step). The single source of services is **`services.json`** (append new services at the END so history keeps its indexes).
 - Monitor: `.github/workflows/uptime.yml`, workflow name "Uptime Monitor", cron `7,22,37,52 * * * *` as written in the file (the effective cadence and whether the owner throttled it like QuNeva-Status is **غير مؤكد**); it probes each service, writes to Supabase table `status_checks_portfolio` and opens an incident when a service is down. `auto-heal.yml` re-runs infra-failed jobs. **Actions is billing-blocked**, so check whether runs happen at all before trusting "operational" (**غير مؤكد**).
 
 ## 4. Services
 
-- GitHub Pages + GitHub Actions; **Supabase** project `kefoipujbrnfujqxidbv` (table `status_checks_portfolio`, RLS on); **Resend** (API) or SMTP for alert e-mail; Cloudflare DNS for the custom domain (record details غير مؤكد).
+- GitHub Pages and/or Cloudflare Pages (project `status-public`, see section 3) + GitHub Actions; **Supabase** project `kefoipujbrnfujqxidbv` (table `status_checks_portfolio`, RLS on); **Resend** (API) or SMTP for alert e-mail; Cloudflare DNS for the custom domain (record details غير مؤكد).
 
 ## 5. Secrets and variables (names only; GitHub repository secrets)
 
