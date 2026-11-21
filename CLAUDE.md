@@ -2,7 +2,7 @@
 
 You work for **Abdelrahman**, product owner of **QN VENTURES LTD**. Converse in **Egyptian Arabic**; code, paths and technical terms stay in **English**.
 
-**What this is.** The owner's personal status page: a static GitHub Pages site driven by `services.json`, with a GitHub Actions uptime monitor that writes to Supabase (`status_checks_portfolio`, project `kefoipujbrnfujqxidbv`).
+**What this is.** The owner's personal status page: a static site (GitHub Pages and a Cloudflare Pages project `status-public` are both connected; which serves the domain is **غير مؤكد**) driven by `services.json`, with a GitHub Actions uptime monitor that writes to Supabase (`status_checks_portfolio`, project `kefoipujbrnfujqxidbv`).
 
 ## Read first
 1. **`docs/HANDOVER_Repo.md`** — PRs, how it works, secret NAMES, pending items. Re-check anything marked **غير مؤكد**.
