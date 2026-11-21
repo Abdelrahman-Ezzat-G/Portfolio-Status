@@ -1,60 +1,60 @@
 {
-  "timestamp": "2026-07-22T14:49:36Z",
-  "date": "2026-07-22",
+  "timestamp": "2026-11-21T00:20:27Z",
+  "date": "2026-11-21",
   "services": {
     "portfolio": {
       "name": "Personal Portfolio",
       "url": "https://abdelrahman-ezzat.com",
       "status": "up",
       "http_status": 200,
-      "response_time_s": 0.152380,
-      "ssl_days_left": 89,
-      "ssl_expires": "2026-10-20"
+      "response_time_s": 0.130854,
+      "ssl_days_left": 40,
+      "ssl_expires": "2026-12-31"
     },
     "ha": {
       "name": "Service A",
       "url": "",
       "status": "up",
       "http_status": 200,
-      "response_time_s": 0.544948,
-      "ssl_days_left": 37,
-      "ssl_expires": "2026-08-28"
+      "response_time_s": 0.554280,
+      "ssl_days_left": 34,
+      "ssl_expires": "2026-12-25"
     },
     "quneva": {
       "name": "QuNeva Platform",
       "url": "https://quneva.com",
       "status": "up",
       "http_status": 200,
-      "response_time_s": 0.255451,
-      "ssl_days_left": 51,
-      "ssl_expires": "2026-09-12"
+      "response_time_s": 0.138291,
+      "ssl_days_left": 48,
+      "ssl_expires": "2027-01-08"
     },
     "ai": {
       "name": "QuNeva AI",
       "url": "https://ai.quneva.com",
-      "status": "up",
-      "http_status": 200,
-      "response_time_s": 0.237597,
-      "ssl_days_left": 41,
-      "ssl_expires": "2026-09-02"
+      "status": "down",
+      "http_status": 0,
+      "response_time_s": 0,
+      "ssl_days_left": null,
+      "ssl_expires": null
     },
     "qstatus": {
       "name": "QuNeva Status Page",
       "url": "https://status.quneva.com",
-      "status": "up",
-      "http_status": 200,
-      "response_time_s": 0.142545,
-      "ssl_days_left": 54,
-      "ssl_expires": "2026-09-15"
+      "status": "down",
+      "http_status": 0,
+      "response_time_s": 0,
+      "ssl_days_left": null,
+      "ssl_expires": null
     },
     "finance": {
       "name": "Service B",
       "url": "",
       "status": "up",
       "http_status": 200,
-      "response_time_s": 0.174190,
-      "ssl_days_left": 84,
-      "ssl_expires": "2026-10-15"
+      "response_time_s": 0.195837,
+      "ssl_days_left": 81,
+      "ssl_expires": "2027-02-10"
     }
   }
 }

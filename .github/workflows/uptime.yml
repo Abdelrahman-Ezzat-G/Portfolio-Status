@@ -21,10 +21,14 @@ jobs:
   check-uptime:
     name: Check Services
     runs-on: ubuntu-latest
+    # Hard ceiling so a hung step can never occupy the concurrency queue for
+    # long — a normal run (including down-confirmation re-checks) finishes in
+    # a few minutes.
+    timeout-minutes: 10
 
     steps:
       - name: Checkout
-        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
         with:
           ref: main
           fetch-depth: 0
@@ -269,7 +273,7 @@ jobs:
       - name: Open incident if down
         id: incident
         if: steps.checks.outputs.all_up == 'false'
-        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         env:
           DOWN_LIST: ${{ steps.checks.outputs.down_list }}
         with:
@@ -301,7 +305,7 @@ jobs:
       - name: Auto-close incident if all services recovered
         id: recover
         if: steps.checks.outputs.all_up == 'true'
-        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -334,7 +338,7 @@ jobs:
       - name: Manage SSL expiry warnings
         id: ssl
         continue-on-error: true
-        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         env:
           SSL_WARN_LIST: ${{ steps.checks.outputs.ssl_warn_list }}
         with:
@@ -464,7 +468,7 @@ jobs:
 
       - name: Build incidents JSON
         continue-on-error: true
-        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -536,7 +540,7 @@ jobs:
 
       - name: Build maintenance JSON
         continue-on-error: true
-        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
